@@ -1,0 +1,1 @@
+"C:\Program Files\Epic Games\UE_4.25\Engine\Binaries\DotNET\UnrealBuildTool.exe" -ProjectFiles Development Win64 -Project="%CD%\TweenerDevelopment.uproject" -TargetType=Editor -Progress -NoHotReloadFromIDE 
