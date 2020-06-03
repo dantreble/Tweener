@@ -410,7 +410,7 @@ public:
 	int32 ParameterIndex;
 
 	/** Cached property pointer */
-	FProperty* CachedProperty;
+	UProperty* CachedProperty;
 	
 	// tweenable: Action and property
 	//internal Action<Transform, float> customAction;

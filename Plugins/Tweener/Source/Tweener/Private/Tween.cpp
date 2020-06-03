@@ -643,8 +643,8 @@ UTween* UTween::FloatFrom(UObject* Object, FName PropertyName, float Value,
 	{
 		return nullptr;
 	}
-	
-	if (FFloatProperty* FloatProperty = FindFProperty<FFloatProperty>(Object->GetClass(), PropertyName))
+
+	if (UFloatProperty* FloatProperty = FindField<UFloatProperty>(Object->GetClass(), PropertyName))
 	{
 		const float ValueTo = FloatProperty->GetPropertyValue_InContainer(Object);
 
@@ -687,7 +687,7 @@ UTween* UTween::VectorFrom(UObject* Object, FName PropertyName, FVector Vector,
 		return nullptr;
 	}
 	
-	if (FStructProperty* StructProperty = FindFProperty<FStructProperty>(Object->GetClass(), PropertyName))
+	if (UStructProperty* StructProperty = FindField<UStructProperty>(Object->GetClass(), PropertyName))
 	{
 		FVector VectorTo = *StructProperty->ContainerPtrToValuePtr<FVector>(Object);
 
@@ -998,7 +998,7 @@ bool UTween::CacheInitialValuesProperty(const UObject& Object)
 	switch (TweenType)
 	{
 		case ETweenType::Scalar:
-			if (FFloatProperty* FloatProperty = FindFProperty<FFloatProperty>(Object.GetClass(), ParameterName))
+			if (UFloatProperty* FloatProperty = FindField<UFloatProperty>(Object.GetClass(), ParameterName))
 			{
 				const float Value = FloatProperty->GetPropertyValue_InContainer(&Object);
 				TargetValueType = ETargetValueType::Scalar;
@@ -1010,7 +1010,7 @@ bool UTween::CacheInitialValuesProperty(const UObject& Object)
 			break;
 	
 		case ETweenType::Vector:
-			if (FStructProperty* StructProperty = FindFProperty<FStructProperty>(Object.GetClass(), ParameterName))
+			if (UStructProperty* StructProperty = FindField<UStructProperty>(Object.GetClass(), ParameterName))
 			{
 				TargetValueType = ETargetValueType::Vector;
 				StartValue = *StructProperty->ContainerPtrToValuePtr<FVector>(&Object);
@@ -1215,14 +1215,14 @@ void UTween::SetAsRequiredProperty(const FVector4& Vec, UObject& Object) const
 	switch (TweenType)
 	{
 		case ETweenType::Scalar:
-			if(FFloatProperty *FloatProperty = CastField<FFloatProperty>(CachedProperty))
+			if(UFloatProperty *FloatProperty = Cast<UFloatProperty>(CachedProperty))
 			{
 				FloatProperty->SetPropertyValue_InContainer(&Object, static_cast<float>(Vec.X));
 			}
 
 			break;
 		case ETweenType::Vector:
-			if (FStructProperty* StructProperty = CastField<FStructProperty>(CachedProperty))
+			if (UStructProperty* StructProperty = Cast<UStructProperty>(CachedProperty))
 			{
 				*StructProperty->ContainerPtrToValuePtr<FVector>(&Object) = FVector(Vec.X,Vec.Y,Vec.Z);
 			}
