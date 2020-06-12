@@ -1,2 +1,2 @@
-"C:\Program Files\Epic Games\UE_4.24\Engine\Binaries\DotNET\UnrealBuildTool.exe" Development Win64 -Project="%CD%\TweenerDevelopment.uproject" -TargetType=Editor -Progress -NoHotReloadFromIDE 
-"C:\Program Files\Epic Games\UE_4.24\Engine\Binaries\Win64\UE4Editor.exe" "%CD%\TweenerDevelopment.uproject"
+"C:\Program Files\Epic Games\UE_4.23\Engine\Binaries\DotNET\UnrealBuildTool.exe" Development Win64 -Project="%CD%\TweenerDevelopment.uproject" -TargetType=Editor -Progress -NoHotReloadFromIDE 
+"C:\Program Files\Epic Games\UE_4.23\Engine\Binaries\Win64\UE4Editor.exe" "%CD%\TweenerDevelopment.uproject"

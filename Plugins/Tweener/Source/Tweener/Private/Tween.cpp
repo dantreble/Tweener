@@ -176,7 +176,7 @@ UTween* UTween::ComponentRelativeLocationFrom(USceneComponent* SceneComponent, F
 		return nullptr;
 	}
 
-	const FVector CurrentRelativeLocation = SceneComponent->GetRelativeLocation();
+	const FVector CurrentRelativeLocation = SceneComponent->RelativeLocation;
 	SceneComponent->SetRelativeLocation(Location);
 	
 	return NewTweenSceneComponent( SceneComponent, ETweenType::RelativeLocation, FVector4(CurrentRelativeLocation), bIsLocationRelative, 
@@ -224,7 +224,7 @@ UTween* UTween::ComponentRelativeScaleFrom(USceneComponent* SceneComponent, FVec
 		return nullptr;
 	}
 
-	const FVector CurrentScale = SceneComponent->GetRelativeScale3D();
+	const FVector CurrentScale = SceneComponent->RelativeScale3D;
 	SceneComponent->SetRelativeScale3D(Scale);
 
 	return NewTweenSceneComponent( SceneComponent, ETweenType::RelativeScale, FVector4(CurrentScale), bIsScaleRelative, 
@@ -272,7 +272,7 @@ UTween* UTween::ComponentRelativeRotationFrom(USceneComponent* SceneComponent, F
 		return nullptr;
 	}
 
-	const FQuat RelativeRotation = FQuat(SceneComponent->GetRelativeRotation());
+	const FQuat RelativeRotation = FQuat(SceneComponent->RelativeRotation);
 	SceneComponent->SetRelativeRotation(Rotation);
 
 	return NewTweenSceneComponent( SceneComponent, ETweenType::RelativeRotation, FVector4(RelativeRotation.X, RelativeRotation.Y, RelativeRotation.Z, RelativeRotation.W), bIsRotationRelative,
@@ -865,7 +865,7 @@ bool UTween::CacheInitialValuesSceneComponent(const USceneComponent& SceneCompon
 		case ETweenType::RelativeLocation:
 			{
 				TargetValueType = ETargetValueType::Vector;
-				StartValue = SceneComponent.GetRelativeLocation();
+				StartValue = SceneComponent.RelativeLocation;
 				return true;
 			}
 		case ETweenType::Rotation:
@@ -878,7 +878,7 @@ bool UTween::CacheInitialValuesSceneComponent(const USceneComponent& SceneCompon
 		case ETweenType::RelativeRotation:
 			{
 				TargetValueType = ETargetValueType::Quat;
-				const FQuat RelativeRotation = FQuat(SceneComponent.GetRelativeRotation());
+				const FQuat RelativeRotation = FQuat(SceneComponent.RelativeRotation);
 				StartValue = FVector4(RelativeRotation.X, RelativeRotation.Y, RelativeRotation.Z, RelativeRotation.W);
 				return true;
 			}
@@ -891,7 +891,7 @@ bool UTween::CacheInitialValuesSceneComponent(const USceneComponent& SceneCompon
 		case ETweenType::RelativeScale:
 			{
 				TargetValueType = ETargetValueType::Vector;
-				StartValue = SceneComponent.GetRelativeScale3D();
+				StartValue = SceneComponent.RelativeScale3D;
 				return true;
 			}
 		default:
