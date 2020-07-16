@@ -1,6 +1,13 @@
 # Tweener
 Tweener is a Unreal Engine plugin for animating properties. It works independently of using a tick or a animation. It doesn't require any initialisation.
 
+![Actor Location Example](/docs/Location.gif)
+
+![Material Color Example](/docs/Material.gif)
+
+![Widget Scale Example](/docs/Widget.gif)
+
+
 Each tween is available as a async task, or can be created from the tweener subsystem.
 
 It can tween
