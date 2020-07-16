@@ -373,9 +373,6 @@ public:
 	ETweenTargetObjectType TargetObjectType;
 
 	UPROPERTY()
-	ETargetValueType TargetValueType;			//Can be inferred from TweenType and TargetObjectType
-
-	UPROPERTY()
 	EEaseType EaseType;
 
 	FWeakObjectPtr ObjectPtr;
@@ -459,33 +456,43 @@ private:
 	static UTween* NewTweenSceneComponent(USceneComponent* SceneComponent, ETweenType TweenType, FVector4 Target, bool bIsRelative, float Duration,
 	                               EEaseType EaseType, ELoopType LoopType, int32 Loops, float DelayBetweenLoops,
 	                               const UObject* WorldContextObject);
+	static UTween* NewTweenSceneComponentFrom(USceneComponent* SceneComponent, ETweenType TweenType, FVector4 From,
+	                                   bool bIsRelative, float Duration, EEaseType EaseType, ELoopType LoopType,
+	                                   int32 Loops, float DelayBetweenLoops, const UObject* WorldContextObject);
 
 	static UTween* NewTweenWidget(UWidget* Widget, ETweenType TweenType, FVector4 Target, bool bIsRelative, float Duration,
-	                       EEaseType EaseType, ELoopType LoopType, int32 Loops, float DelayBetweenLoops,
-	                       const UObject* WorldContextObject);
+	                              EEaseType EaseType, ELoopType LoopType, int32 Loops, float DelayBetweenLoops,
+	                              const UObject* WorldContextObject);
+
+	static UTween* NewTweenWidgetFrom(UWidget* Widget, ETweenType TweenType, FVector4 From, bool bIsRelative, float Duration,
+	                           EEaseType EaseType, ELoopType LoopType, int32 Loops, float DelayBetweenLoops,
+	                           const UObject* WorldContextObject);
 
 	void HandleLooping();
 
 	void SetAsRequiredPerCurrentTweenType(const FVector4& Vec) const;
 
-	void SetAsRequiredSceneComponent(const FVector4& Vec, USceneComponent& SceneComponent) const;
+	static void SetValueSceneComponent(const FVector4& Vec, USceneComponent& SceneComponent, ETweenType TweenType);
 
-	void SetAsRequiredMaterial(const FVector4& Vec, UMaterialInstanceDynamic& Material) const;
+	static void SetValueMaterial(const FVector4& Vec, UMaterialInstanceDynamic& Material, ETweenType TweenType, int32 ParameterIndex);
 	
 	static void SetWidgetColorAndOpacity(UWidget& Widget, FLinearColor ColorAndOpacity);
 
-	void SetAsRequiredWidget(const FVector4& Vec, UWidget& Widget) const;
-	void SetAsRequiredProperty(const FVector4& Vec, UObject& Object) const;
+	static void SetValueWidget(const FVector4& Vec, UWidget& Widget, ETweenType TweenType);
+	
+	static void SetValueProperty(const FVector4& Vec, UObject& Object, ETweenType TweenType, const FProperty* CachedProperty);
 
 	bool CacheInitialValues();
 
-	bool CacheInitialValuesSceneComponent(const USceneComponent& SceneComponent);	
-	bool CacheInitialValuesMaterial(UMaterialInstanceDynamic& Material);
+	ETargetValueType GetTargetValueType() const;
+	
+	static bool GetValueSceneComponent(FVector4& OutVec, const USceneComponent& SceneComponent, ETweenType TweenType);
+	static bool GetValueMaterial(FVector4& OutVec, int32& OutParameterIndex, UMaterialInstanceDynamic& Material, FName ParameterName, ETweenType TweenType);
 
 	static FLinearColor GetWidgetColorAndOpacity(const UWidget& Widget);
 
-	bool CacheInitialValuesWidget(const UWidget& Widget);
-	bool CacheInitialValuesProperty(const UObject& Object);
+	static bool GetValueWidget(FVector4& OutVec, const UWidget& Widget, ETweenType TweenType);
+	static bool GetValueProperty(FVector4& OutVec, FProperty*& OutProperty, const UObject& Object, FName ParameterName, ETweenType TweenType);
 
 	const UObject* WorldContextObject;
 	
