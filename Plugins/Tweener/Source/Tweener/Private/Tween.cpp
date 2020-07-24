@@ -568,7 +568,7 @@ UTween* UTween::FloatFrom(UObject* Object, FName PropertyName, float Value,
 	int32 Loops, float DelayBetweenLoops, const UObject* WorldContextObject)
 {
 	FVector4 CurrentValue;
-	FProperty* Property;
+	UProperty* Property;
 
 	const ETweenType TweenType = ETweenType::Scalar;
 	if (!Object || !GetValueProperty(CurrentValue, Property, *Object, PropertyName, TweenType))
@@ -609,7 +609,7 @@ UTween* UTween::VectorFrom(UObject* Object, FName PropertyName, FVector Vector,
 	int32 Loops, float DelayBetweenLoops, const UObject* WorldContextObject)
 {
 	FVector4 CurrentValue;
-	FProperty* Property;
+	UProperty* Property;
 
 	const ETweenType TweenType = ETweenType::Vector;
 	if (!Object || !GetValueProperty(CurrentValue, Property, *Object, PropertyName, TweenType))
@@ -921,7 +921,7 @@ bool UTween::GetValueWidget(FVector4& OutVec, const UWidget& Widget, ETweenType 
 	}
 }
 
-bool UTween::GetValueProperty(FVector4& OutVec, FProperty*& OutProperty, const UObject& Object, FName ParameterName, ETweenType TweenType)
+bool UTween::GetValueProperty(FVector4& OutVec, UProperty*& OutProperty, const UObject& Object, FName ParameterName, ETweenType TweenType)
 {
 	switch (TweenType)
 	{
@@ -1136,19 +1136,19 @@ void UTween::SetValueWidget(const FVector4& Vec, UWidget& Widget, ETweenType Twe
 	}
 }
 
-void UTween::SetValueProperty(const FVector4& Vec, UObject& Object, ETweenType TweenType, const FProperty *CachedProperty)
+void UTween::SetValueProperty(const FVector4& Vec, UObject& Object, ETweenType TweenType, const UProperty *CachedProperty)
 {
 	switch (TweenType)
 	{
 		case ETweenType::Scalar:
-			if(UFloatProperty *FloatProperty = Cast<UFloatProperty>(CachedProperty))
+			if(const UFloatProperty *FloatProperty = Cast<UFloatProperty>(CachedProperty))
 			{
 				FloatProperty->SetPropertyValue_InContainer(&Object, static_cast<float>(Vec.X));
 			}
 
 			break;
 		case ETweenType::Vector:
-			if (UStructProperty* StructProperty = Cast<UStructProperty>(CachedProperty))
+			if (const UStructProperty* StructProperty = Cast<UStructProperty>(CachedProperty))
 			{
 				*StructProperty->ContainerPtrToValuePtr<FVector>(&Object) = FVector(Vec.X,Vec.Y,Vec.Z);
 			}

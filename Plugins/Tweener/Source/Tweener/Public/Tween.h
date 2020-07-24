@@ -7,7 +7,7 @@
 
 class UMaterialInstanceDynamic;
 class UWidget;
-class FProperty;
+class UProperty;
 
 
 //Line up with EControlRigAnimEasingType
@@ -480,7 +480,7 @@ private:
 
 	static void SetValueWidget(const FVector4& Vec, UWidget& Widget, ETweenType TweenType);
 	
-	static void SetValueProperty(const FVector4& Vec, UObject& Object, ETweenType TweenType, const FProperty* CachedProperty);
+	static void SetValueProperty(const FVector4& Vec, UObject& Object, ETweenType TweenType, const UProperty* CachedProperty);
 
 	bool CacheInitialValues();
 
@@ -492,7 +492,7 @@ private:
 	static FLinearColor GetWidgetColorAndOpacity(const UWidget& Widget);
 
 	static bool GetValueWidget(FVector4& OutVec, const UWidget& Widget, ETweenType TweenType);
-	static bool GetValueProperty(FVector4& OutVec, FProperty*& OutProperty, const UObject& Object, FName ParameterName, ETweenType TweenType);
+	static bool GetValueProperty(FVector4& OutVec, UProperty*& OutProperty, const UObject& Object, FName ParameterName, ETweenType TweenType);
 
 	const UObject* WorldContextObject;
 	
