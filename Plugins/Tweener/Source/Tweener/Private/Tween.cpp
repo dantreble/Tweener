@@ -124,6 +124,22 @@ UTween* UTween::NewTweenSceneComponent(USceneComponent* SceneComponent, ETweenTy
 	return nullptr;
 }
 
+UTween* UTween::NewTweenSceneComponentFrom(USceneComponent* SceneComponent, ETweenType TweenType, FVector4 From, bool bIsRelative, float Duration, EEaseType EaseType, ELoopType LoopType, int32 Loops, float DelayBetweenLoops, const UObject* WorldContextObject)
+{
+	FVector4 Target;
+
+	if (!SceneComponent || !GetValueSceneComponent(Target, *SceneComponent, TweenType))
+	{
+		return nullptr;
+	}
+
+	SetValueSceneComponent(From, *SceneComponent, TweenType);
+
+	return NewTweenSceneComponent(SceneComponent, TweenType, Target, bIsRelative,
+		Duration, EaseType, LoopType, Loops, DelayBetweenLoops, WorldContextObject);
+}
+
+
 UTween* UTween::NewTweenWidget(UWidget* Widget, ETweenType TweenType, FVector4 Target, bool bIsRelative, float Duration, EEaseType EaseType, ELoopType LoopType, int32 Loops, float DelayBetweenLoops, const UObject* WorldContextObject)
 {
 	if (Widget)
@@ -132,6 +148,21 @@ UTween* UTween::NewTweenWidget(UWidget* Widget, ETweenType TweenType, FVector4 T
 	}
 
 	return nullptr;
+}
+
+UTween* UTween::NewTweenWidgetFrom(UWidget* Widget, ETweenType TweenType, FVector4 From, bool bIsRelative, float Duration, EEaseType EaseType, ELoopType LoopType, int32 Loops, float DelayBetweenLoops, const UObject* WorldContextObject)
+{
+	FVector4 Target;
+
+	if (!Widget || !GetValueWidget(Target, *Widget, TweenType))
+	{
+		return nullptr;
+	}
+
+	SetValueWidget(From, *Widget, TweenType);
+
+	return NewTweenWidget(Widget, TweenType, Target, bIsRelative,
+		Duration, EaseType, LoopType, Loops, DelayBetweenLoops, WorldContextObject);
 }
 
 UTween* UTween::ComponentLocationTo(USceneComponent* SceneComponent, FVector Location, 
@@ -146,16 +177,7 @@ UTween* UTween::ComponentLocationFrom(USceneComponent* SceneComponent, FVector L
 	bool bIsLocationRelative, float Duration, EEaseType EaseType, ELoopType LoopType, int32 Loops,
 	float DelayBetweenLoops, const UObject* WorldContextObject)
 {
-	if(!SceneComponent)
-	{
-		return nullptr;
-	}
-	
-	const FVector CurrentLocation = SceneComponent->GetComponentLocation();
-
-	SceneComponent->SetWorldLocation(Location);
-
-	return NewTweenSceneComponent( SceneComponent, ETweenType::Location, FVector4(CurrentLocation), bIsLocationRelative, 
+	return NewTweenSceneComponentFrom(SceneComponent, ETweenType::Location, FVector4(Location), bIsLocationRelative,
 		Duration, EaseType, LoopType, Loops, DelayBetweenLoops, WorldContextObject);
 }
 
@@ -171,15 +193,7 @@ UTween* UTween::ComponentRelativeLocationFrom(USceneComponent* SceneComponent, F
 	bool bIsLocationRelative, float Duration, EEaseType EaseType, ELoopType LoopType, int32 Loops,
 	float DelayBetweenLoops, const UObject* WorldContextObject)
 {
-	if (!SceneComponent)
-	{
-		return nullptr;
-	}
-
-	const FVector CurrentRelativeLocation = SceneComponent->GetRelativeLocation();
-	SceneComponent->SetRelativeLocation(Location);
-	
-	return NewTweenSceneComponent( SceneComponent, ETweenType::RelativeLocation, FVector4(CurrentRelativeLocation), bIsLocationRelative, 
+	return NewTweenSceneComponentFrom(SceneComponent, ETweenType::RelativeLocation, FVector4(Location), bIsLocationRelative,
 		Duration, EaseType, LoopType, Loops, DelayBetweenLoops, WorldContextObject);
 }
 
@@ -195,15 +209,7 @@ UTween* UTween::ComponentScaleFrom(USceneComponent* SceneComponent, FVector Scal
 	bool bIsScaleRelative, float Duration, EEaseType EaseType, ELoopType LoopType, int32 Loops, 
 	float DelayBetweenLoops, const UObject* WorldContextObject)
 {
-	if (!SceneComponent)
-	{
-		return nullptr;
-	}
-
-	const FVector CurrentScale = SceneComponent->GetComponentScale();
-	SceneComponent->SetWorldScale3D(Scale);
-
-	return NewTweenSceneComponent( SceneComponent, ETweenType::Scale, FVector4(CurrentScale), bIsScaleRelative, 
+	return NewTweenSceneComponentFrom(SceneComponent, ETweenType::Scale, FVector4(Scale), bIsScaleRelative,
 		Duration, EaseType, LoopType, Loops, DelayBetweenLoops, WorldContextObject);
 }
 
@@ -219,15 +225,7 @@ UTween* UTween::ComponentRelativeScaleFrom(USceneComponent* SceneComponent, FVec
 	bool bIsScaleRelative, float Duration, EEaseType EaseType, ELoopType LoopType, int32 Loops, 
 	float DelayBetweenLoops, const UObject* WorldContextObject)
 {
-	if (!SceneComponent)
-	{
-		return nullptr;
-	}
-
-	const FVector CurrentScale = SceneComponent->GetRelativeScale3D();
-	SceneComponent->SetRelativeScale3D(Scale);
-
-	return NewTweenSceneComponent( SceneComponent, ETweenType::RelativeScale, FVector4(CurrentScale), bIsScaleRelative, 
+	return NewTweenSceneComponentFrom(SceneComponent, ETweenType::Scale, FVector4(Scale), bIsScaleRelative,
 		Duration, EaseType, LoopType, Loops, DelayBetweenLoops, WorldContextObject);
 }
 
@@ -243,15 +241,7 @@ UTween* UTween::ComponentRotationFrom(USceneComponent* SceneComponent, FQuat Rot
 	bool bIsRotationRelative, float Duration, EEaseType EaseType, ELoopType LoopType, int32 Loops,
 	float DelayBetweenLoops, const UObject* WorldContextObject)
 {
-	if (!SceneComponent)
-	{
-		return nullptr;
-	}
-
-	const FQuat CurrentRotation = SceneComponent->GetComponentQuat();
-	SceneComponent->SetWorldRotation(Rotation);
-
-	return NewTweenSceneComponent( SceneComponent, ETweenType::Rotation, FVector4(CurrentRotation.X, CurrentRotation.Y, CurrentRotation.Z, CurrentRotation.W), bIsRotationRelative, 
+	return NewTweenSceneComponentFrom(SceneComponent, ETweenType::Rotation, FVector4(Rotation.X, Rotation.Y, Rotation.Z, Rotation.W), bIsRotationRelative,
 		Duration, EaseType, LoopType, Loops, DelayBetweenLoops, WorldContextObject);
 }
 
@@ -267,15 +257,7 @@ UTween* UTween::ComponentRelativeRotationFrom(USceneComponent* SceneComponent, F
 	bool bIsRotationRelative, float Duration, EEaseType EaseType, ELoopType LoopType, int32 Loops,
 	float DelayBetweenLoops, const UObject* WorldContextObject)
 {
-	if (!SceneComponent)
-	{
-		return nullptr;
-	}
-
-	const FQuat RelativeRotation = FQuat(SceneComponent->GetRelativeRotation());
-	SceneComponent->SetRelativeRotation(Rotation);
-
-	return NewTweenSceneComponent( SceneComponent, ETweenType::RelativeRotation, FVector4(RelativeRotation.X, RelativeRotation.Y, RelativeRotation.Z, RelativeRotation.W), bIsRotationRelative,
+	return NewTweenSceneComponentFrom(SceneComponent, ETweenType::RelativeRotation, FVector4(Rotation.X, Rotation.Y, Rotation.Z, Rotation.W), bIsRotationRelative,
 		Duration, EaseType, LoopType, Loops, DelayBetweenLoops, WorldContextObject);
 }
 
@@ -447,16 +429,7 @@ UTween* UTween::WidgetRenderLocationFrom(UWidget* Widget, FVector2D Location,
 	bool bIsLocationRelative, float Duration, EEaseType EaseType, ELoopType LoopType, 
 	int32 Loops, float DelayBetweenLoops, const UObject* WorldContextObject)
 {
-	if (!Widget)
-	{
-		return nullptr;
-	}
-
-	const FVector2D CurrentLocation = Widget->RenderTransform.Translation;
-
-	Widget->SetRenderTranslation(Location);
-
-	return NewTweenWidget(Widget, ETweenType::RelativeLocation, FVector4(CurrentLocation.X, CurrentLocation.Y), bIsLocationRelative, 
+	return NewTweenWidgetFrom(Widget, ETweenType::RelativeLocation, FVector4(Location.X, Location.Y), bIsLocationRelative,
 		Duration, EaseType, LoopType, Loops, DelayBetweenLoops, WorldContextObject);
 }
 
@@ -465,22 +438,13 @@ UTween* UTween::WidgetRenderScaleTo(UWidget* Widget, FVector2D Scale,
 {
 	return NewTweenWidget(Widget, ETweenType::RelativeScale, FVector4(Scale.X, Scale.Y), bIsScaleRelative, 
 		Duration, EaseType, LoopType, Loops, DelayBetweenLoops, WorldContextObject);
-
 }
 
 UTween* UTween::WidgetRenderScaleFrom(UWidget* Widget, FVector2D Scale,
 	bool bIsScaleRelative, float Duration, EEaseType EaseType, ELoopType LoopType, 
 	int32 Loops, float DelayBetweenLoops, const UObject* WorldContextObject)
 {
-	if (!Widget)
-	{
-		return nullptr;
-	}
-	const FVector2D CurrentScale = Widget->RenderTransform.Translation;
-
-	Widget->SetRenderScale(Scale);
-
-	return NewTweenWidget(Widget, ETweenType::RelativeScale, FVector4(CurrentScale.X, CurrentScale.Y), bIsScaleRelative, 
+	return NewTweenWidgetFrom(Widget, ETweenType::RelativeScale, FVector4(Scale.X, Scale.Y), bIsScaleRelative,
 		Duration, EaseType, LoopType, Loops, DelayBetweenLoops, WorldContextObject);
 }
 
@@ -496,16 +460,7 @@ UTween* UTween::WidgetRenderShearFrom(UWidget* Widget, FVector2D Shear,
 	bool bIsShearRelative, float Duration, EEaseType EaseType, ELoopType LoopType, 
 	int32 Loops, float DelayBetweenLoops, const UObject* WorldContextObject)
 {
-	if (!Widget)
-	{
-		return nullptr;
-	}
-	
-	const FVector2D CurrentShear = Widget->RenderTransform.Shear;
-
-	Widget->SetRenderShear(Shear);
-
-	return NewTweenWidget(Widget, ETweenType::RelativeShear, FVector4(CurrentShear.X, CurrentShear.Y), bIsShearRelative, 
+	return NewTweenWidgetFrom(Widget, ETweenType::RelativeShear, FVector4(Shear.X, Shear.Y), bIsShearRelative,
 		Duration, EaseType, LoopType, Loops, DelayBetweenLoops, WorldContextObject);
 }
 
@@ -521,16 +476,7 @@ UTween* UTween::WidgetRenderAngleFrom(UWidget* Widget, float Angle,
 	bool bIsAngleRelative, float Duration, EEaseType EaseType, ELoopType LoopType, 
 	int32 Loops, float DelayBetweenLoops, const UObject* WorldContextObject)
 {
-	if (!Widget)
-	{
-		return nullptr;
-	}
-	
-	const float CurrentAngle = Widget->GetRenderTransformAngle();
-
-	Widget->SetRenderTransformAngle(Angle);
-
-	return NewTweenWidget(Widget, ETweenType::RelativeAngle, FVector4(CurrentAngle), bIsAngleRelative, 
+	return NewTweenWidgetFrom(Widget, ETweenType::RelativeAngle, FVector4(Angle), bIsAngleRelative,
 		Duration, EaseType, LoopType, Loops, DelayBetweenLoops, WorldContextObject);
 }
 
@@ -546,16 +492,7 @@ UTween* UTween::WidgetRenderOpacityFrom(UWidget* Widget, float Opacity,
 	bool bIsOpacityRelative, float Duration, EEaseType EaseType, ELoopType LoopType, int32 Loops, 
 	float DelayBetweenLoops, const UObject* WorldContextObject)
 {
-	if (!Widget)
-	{
-		return nullptr;
-	}
-	
-	const float CurrentOpacity = Widget->GetRenderOpacity();
-
-	Widget->SetRenderOpacity(Opacity);
-
-	return NewTweenWidget(Widget, ETweenType::Opacity, FVector4(CurrentOpacity), bIsOpacityRelative, 
+	return NewTweenWidgetFrom(Widget, ETweenType::Opacity, FVector4(Opacity), bIsOpacityRelative,
 		Duration, EaseType, LoopType, Loops, DelayBetweenLoops, WorldContextObject);
 }
 
@@ -571,16 +508,7 @@ UTween* UTween::WidgetColorFrom(UWidget* Widget, const FLinearColor& Color,
 	bool bIsColorRelative, float Duration, EEaseType EaseType, ELoopType LoopType, 
 	int32 Loops, float DelayBetweenLoops, const UObject* WorldContextObject)
 {
-	if (!Widget)
-	{
-		return nullptr;
-	}
-	
-	const FLinearColor CurrentColor = GetWidgetColorAndOpacity(*Widget);
-
-	SetWidgetColorAndOpacity(*Widget, Color);
-
-	return NewTweenWidget(Widget, ETweenType::Color, CurrentColor, bIsColorRelative, 
+	return NewTweenWidgetFrom(Widget, ETweenType::Color, Color, bIsColorRelative,
 		Duration, EaseType, LoopType, Loops, DelayBetweenLoops, WorldContextObject);
 }
 
@@ -639,26 +567,24 @@ UTween* UTween::FloatFrom(UObject* Object, FName PropertyName, float Value,
 	bool bIsValueRelative, float Duration, EEaseType EaseType, ELoopType LoopType, 
 	int32 Loops, float DelayBetweenLoops, const UObject* WorldContextObject)
 {
-	if (!Object)
+	FVector4 CurrentValue;
+	FProperty* Property;
+
+	const ETweenType TweenType = ETweenType::Scalar;
+	if (!Object || !GetValueProperty(CurrentValue, Property, *Object, PropertyName, TweenType))
 	{
 		return nullptr;
 	}
 
-	if (UFloatProperty* FloatProperty = FindField<UFloatProperty>(Object->GetClass(), PropertyName))
-	{
-		const float ValueTo = FloatProperty->GetPropertyValue_InContainer(Object);
+	SetValueProperty(FVector4(Value), *Object, TweenType, Property);
+	
+	UTween* Tween = NewTween(FWeakObjectPtr(Object), ETweenTargetObjectType::Property, TweenType, CurrentValue, bIsValueRelative,
+	                         Duration, EaseType, LoopType, Loops, DelayBetweenLoops, WorldContextObject);
 
-		FloatProperty->SetPropertyValue_InContainer(Object, Value);
+	Tween->ParameterName = PropertyName;
+	Tween->CachedProperty = Property;
 
-		UTween* Tween = NewTween(FWeakObjectPtr(Object), ETweenTargetObjectType::Property, ETweenType::Scalar, FVector4(ValueTo), bIsValueRelative, 
-			Duration, EaseType, LoopType, Loops, DelayBetweenLoops, WorldContextObject);
-
-		Tween->ParameterName = PropertyName;
-
-		return Tween;
-	}
-
-	return nullptr;
+	return Tween;
 }
 
 UTween* UTween::VectorTo(UObject* Object, FName PropertyName, FVector ValueTo, 
@@ -682,26 +608,24 @@ UTween* UTween::VectorFrom(UObject* Object, FName PropertyName, FVector Vector,
 	bool bIsVectorRelative, float Duration, EEaseType EaseType, ELoopType LoopType, 
 	int32 Loops, float DelayBetweenLoops, const UObject* WorldContextObject)
 {
-	if (!Object)
+	FVector4 CurrentValue;
+	FProperty* Property;
+
+	const ETweenType TweenType = ETweenType::Vector;
+	if (!Object || !GetValueProperty(CurrentValue, Property, *Object, PropertyName, TweenType))
 	{
 		return nullptr;
 	}
-	
-	if (UStructProperty* StructProperty = FindField<UStructProperty>(Object->GetClass(), PropertyName))
-	{
-		FVector VectorTo = *StructProperty->ContainerPtrToValuePtr<FVector>(Object);
 
-		*StructProperty->ContainerPtrToValuePtr<FVector>(Object) = Vector;
+	SetValueProperty(Vector, *Object, TweenType, Property);
 
-		UTween* Tween = NewTween(FWeakObjectPtr(Object), ETweenTargetObjectType::Property, ETweenType::Vector, VectorTo, bIsVectorRelative, 
-			Duration, EaseType, LoopType, Loops, DelayBetweenLoops, WorldContextObject);
+	UTween* Tween = NewTween(FWeakObjectPtr(Object), ETweenTargetObjectType::Property, TweenType, CurrentValue, bIsVectorRelative,
+		Duration, EaseType, LoopType, Loops, DelayBetweenLoops, WorldContextObject);
 
-		Tween->ParameterName = PropertyName;
+	Tween->ParameterName = PropertyName;
+	Tween->CachedProperty = Property;
 
-		return Tween;
-	}
-
-	return nullptr;
+	return Tween;
 }
 
 UTween* UTween::NextVectorTo(FVector VectorTo, float InDuration, float InDelay)
@@ -779,26 +703,26 @@ bool UTween::CacheInitialValues()
 		case ETweenTargetObjectType::SceneComponent:
 			if (const USceneComponent * SceneComponent = Cast<USceneComponent>(Object))
 			{
-				return CacheInitialValuesSceneComponent(*SceneComponent);
+				return GetValueSceneComponent(StartValue, *SceneComponent, TweenType);
 			}
 			break;
 			
 		case ETweenTargetObjectType::Material:
 			if (UMaterialInstanceDynamic* Material = Cast<UMaterialInstanceDynamic>(Object))
 			{
-				return CacheInitialValuesMaterial(*Material);
+				return GetValueMaterial(StartValue, ParameterIndex, *Material, ParameterName, TweenType);
 			}
 			break;
 			
 		case ETweenTargetObjectType::Widget:
 			if (const UWidget* Widget = Cast<UWidget>(Object))
 			{
-				return CacheInitialValuesWidget(*Widget);
+				return GetValueWidget(StartValue,*Widget,TweenType);
 			}
 			break;
 
 		case ETweenTargetObjectType::Property:
-			return CacheInitialValuesProperty(*Object);
+			return GetValueProperty(StartValue,CachedProperty,*Object,ParameterName,TweenType);
 
 		default:
 			return false;
@@ -816,7 +740,7 @@ bool UTween::PrepareForUse()
 		
 	ElapsedTime = -Delay;
 
-	switch (TargetValueType)
+	switch (GetTargetValueType())
 	{
 		case ETargetValueType::Vector:
 		case ETargetValueType::Color: 
@@ -852,46 +776,60 @@ bool UTween::PrepareForUse()
 }
 
 
-bool UTween::CacheInitialValuesSceneComponent(const USceneComponent& SceneComponent)
+ETargetValueType UTween::GetTargetValueType() const
+{
+	switch (TweenType)
+	{
+	case ETweenType::Rotation:
+	case ETweenType::RelativeRotation:
+		return ETargetValueType::Quat;
+	case ETweenType::Color:	
+		return  ETargetValueType::Color;
+	case ETweenType::Scalar:
+	case ETweenType::RelativeAngle:
+	case ETweenType::Opacity:
+		return ETargetValueType::Scalar;
+	default:
+		return ETargetValueType::Vector;
+	}
+			
+	
+}
+
+bool UTween::GetValueSceneComponent(FVector4 &OutVec, const USceneComponent& SceneComponent, ETweenType TweenType)
 {
 	switch (TweenType)
 	{
 		case ETweenType::Location:
 			{
-				TargetValueType = ETargetValueType::Vector;
-				StartValue = SceneComponent.GetComponentLocation();
+				OutVec = SceneComponent.GetComponentLocation();
 				return true;
 			}
 		case ETweenType::RelativeLocation:
 			{
-				TargetValueType = ETargetValueType::Vector;
-				StartValue = SceneComponent.GetRelativeLocation();
+				OutVec = SceneComponent.GetRelativeLocation();
 				return true;
 			}
 		case ETweenType::Rotation:
 			{
-				TargetValueType = ETargetValueType::Quat;
 				const FQuat Rotation = SceneComponent.GetComponentQuat();
-				StartValue = FVector4(Rotation.X, Rotation.Y, Rotation.Z, Rotation.W);
+				OutVec = FVector4(Rotation.X, Rotation.Y, Rotation.Z, Rotation.W);
 				return true;
 			}
 		case ETweenType::RelativeRotation:
 			{
-				TargetValueType = ETargetValueType::Quat;
 				const FQuat RelativeRotation = FQuat(SceneComponent.GetRelativeRotation());
-				StartValue = FVector4(RelativeRotation.X, RelativeRotation.Y, RelativeRotation.Z, RelativeRotation.W);
+				OutVec = FVector4(RelativeRotation.X, RelativeRotation.Y, RelativeRotation.Z, RelativeRotation.W);
 				return true;
 			}
 		case ETweenType::Scale:
 			{
-				TargetValueType = ETargetValueType::Vector;
-				StartValue = SceneComponent.GetComponentScale();
+				OutVec = SceneComponent.GetComponentScale();
 				return true;
 			}
 		case ETweenType::RelativeScale:
 			{
-				TargetValueType = ETargetValueType::Vector;
-				StartValue = SceneComponent.GetRelativeScale3D();
+				OutVec = SceneComponent.GetRelativeScale3D();
 				return true;
 			}
 		default:
@@ -899,7 +837,7 @@ bool UTween::CacheInitialValuesSceneComponent(const USceneComponent& SceneCompon
 	}
 }
 
-bool UTween::CacheInitialValuesMaterial(UMaterialInstanceDynamic& Material)
+bool UTween::GetValueMaterial(FVector4& OutVec,int32 &OutParameterIndex, UMaterialInstanceDynamic& Material, FName ParameterName, ETweenType TweenType)
 {
 	const FMaterialParameterInfo ParameterInfo(ParameterName);
 	
@@ -908,13 +846,11 @@ bool UTween::CacheInitialValuesMaterial(UMaterialInstanceDynamic& Material)
 		case ETweenType::Color:
 			{
 				FLinearColor Color(0, 0, 0, 0);
-
-				TargetValueType = ETargetValueType::Color;
 				
 				if (Material.GetVectorParameterValue(ParameterInfo, Color) && 
-					Material.InitializeVectorParameterAndGetIndex(ParameterName, Color, ParameterIndex))
+					Material.InitializeVectorParameterAndGetIndex(ParameterName, Color, OutParameterIndex))
 				{
-					StartValue = FVector4(Color.R, Color.G, Color.B, Color.A);
+					OutVec = FVector4(Color.R, Color.G, Color.B, Color.A);
 
 					return true;
 				}
@@ -925,12 +861,10 @@ bool UTween::CacheInitialValuesMaterial(UMaterialInstanceDynamic& Material)
 			{
 				float Scalar;
 				
-				TargetValueType = ETargetValueType::Scalar;
-
 				if (Material.GetScalarParameterValue(ParameterInfo, Scalar) &&
-					Material.InitializeScalarParameterAndGetIndex(ParameterName, Scalar, ParameterIndex))
+					Material.InitializeScalarParameterAndGetIndex(ParameterName, Scalar, OutParameterIndex))
 				{
-					StartValue = FVector4(Scalar);
+					OutVec = FVector4(Scalar);
 
 					return true;
 				}
@@ -960,40 +894,34 @@ FLinearColor UTween::GetWidgetColorAndOpacity(const UWidget& Widget)
 	return FLinearColor::Black;
 }
 
-bool UTween::CacheInitialValuesWidget(const UWidget& Widget)
+bool UTween::GetValueWidget(FVector4& OutVec, const UWidget& Widget, ETweenType TweenType)
 {
 	switch (TweenType)
 	{
 		case ETweenType::RelativeLocation:
-			TargetValueType = ETargetValueType::Vector;
-			StartValue = FVector4(Widget.RenderTransform.Translation.X, Widget.RenderTransform.Translation.Y);
+			OutVec = FVector4(Widget.RenderTransform.Translation.X, Widget.RenderTransform.Translation.Y);
 			return true;
 		case ETweenType::RelativeScale:
-			TargetValueType = ETargetValueType::Vector;
-			StartValue = FVector4(Widget.RenderTransform.Scale.X, Widget.RenderTransform.Scale.Y);
+			OutVec = FVector4(Widget.RenderTransform.Scale.X, Widget.RenderTransform.Scale.Y);
 			return true;
 		case ETweenType::Color:
-			TargetValueType = ETargetValueType::Color;
-			StartValue = GetWidgetColorAndOpacity(Widget);
+			OutVec = GetWidgetColorAndOpacity(Widget);
 			return true;
 		case ETweenType::RelativeShear:
-			TargetValueType = ETargetValueType::Vector;
-			StartValue = FVector4(Widget.RenderTransform.Shear.X, Widget.RenderTransform.Shear.Y);
+			OutVec = FVector4(Widget.RenderTransform.Shear.X, Widget.RenderTransform.Shear.Y);
 			return true;
 		case ETweenType::RelativeAngle:
-			TargetValueType = ETargetValueType::Scalar;
-			StartValue = FVector4(Widget.GetRenderTransformAngle());
+			OutVec = FVector4(Widget.GetRenderTransformAngle());
 			return true;
 		case ETweenType::Opacity:
-			TargetValueType = ETargetValueType::Scalar;
-			StartValue = FVector4(Widget.RenderOpacity);
+			OutVec = FVector4(Widget.RenderOpacity);
 			return true;
 		default:
 			return false;
 	}
 }
 
-bool UTween::CacheInitialValuesProperty(const UObject& Object)
+bool UTween::GetValueProperty(FVector4& OutVec, FProperty*& OutProperty, const UObject& Object, FName ParameterName, ETweenType TweenType)
 {
 	switch (TweenType)
 	{
@@ -1001,9 +929,8 @@ bool UTween::CacheInitialValuesProperty(const UObject& Object)
 			if (UFloatProperty* FloatProperty = FindField<UFloatProperty>(Object.GetClass(), ParameterName))
 			{
 				const float Value = FloatProperty->GetPropertyValue_InContainer(&Object);
-				TargetValueType = ETargetValueType::Scalar;
-				StartValue = FVector4(Value);
-				CachedProperty = FloatProperty;
+				OutVec = FVector4(Value);
+				OutProperty = FloatProperty;
 				return true;
 			}
 
@@ -1012,9 +939,8 @@ bool UTween::CacheInitialValuesProperty(const UObject& Object)
 		case ETweenType::Vector:
 			if (UStructProperty* StructProperty = FindField<UStructProperty>(Object.GetClass(), ParameterName))
 			{
-				TargetValueType = ETargetValueType::Vector;
-				StartValue = *StructProperty->ContainerPtrToValuePtr<FVector>(&Object);
-				CachedProperty = StructProperty;
+				OutVec = *StructProperty->ContainerPtrToValuePtr<FVector>(&Object);
+				OutProperty = StructProperty;
 				return true;
 			}
 
@@ -1050,7 +976,7 @@ bool UTween::Tick(float DeltaTime, float UnscaledDeltaTime, bool bCompleteTweenT
 
 	FVector4 Vec;
 	
-	switch (TargetValueType)
+	switch (GetTargetValueType())
 	{
 	case ETargetValueType::Vector: 
 	case ETargetValueType::Color: 
@@ -1124,7 +1050,7 @@ void UTween::HandleLooping()
 	ElapsedTime = -Delay;
 }
 
-void UTween::SetAsRequiredSceneComponent(const FVector4& Vec, USceneComponent& SceneComponent) const
+void UTween::SetValueSceneComponent(const FVector4& Vec, USceneComponent& SceneComponent, ETweenType TweenType) 
 {
 	switch (TweenType)
 	{
@@ -1151,7 +1077,7 @@ void UTween::SetAsRequiredSceneComponent(const FVector4& Vec, USceneComponent& S
 	}
 }
 
-void UTween::SetAsRequiredMaterial(const FVector4& Vec, UMaterialInstanceDynamic& Material) const
+void UTween::SetValueMaterial(const FVector4& Vec, UMaterialInstanceDynamic& Material, ETweenType TweenType, int32 ParameterIndex)
 {
 	switch (TweenType)
 	{
@@ -1182,7 +1108,7 @@ void UTween::SetWidgetColorAndOpacity(UWidget& Widget, FLinearColor ColorAndOpac
 	}
 }
 
-void UTween::SetAsRequiredWidget(const FVector4& Vec, UWidget& Widget) const
+void UTween::SetValueWidget(const FVector4& Vec, UWidget& Widget, ETweenType TweenType) 
 {
 	switch (TweenType)
 	{
@@ -1210,7 +1136,7 @@ void UTween::SetAsRequiredWidget(const FVector4& Vec, UWidget& Widget) const
 	}
 }
 
-void UTween::SetAsRequiredProperty(const FVector4& Vec, UObject& Object) const
+void UTween::SetValueProperty(const FVector4& Vec, UObject& Object, ETweenType TweenType, const FProperty *CachedProperty)
 {
 	switch (TweenType)
 	{
@@ -1246,22 +1172,22 @@ void UTween::SetAsRequiredPerCurrentTweenType(const FVector4& Vec) const
 		case ETweenTargetObjectType::SceneComponent:
 			if (USceneComponent* SceneComponent = Cast<USceneComponent>(Object))
 			{
-				SetAsRequiredSceneComponent(Vec, *SceneComponent);
+				SetValueSceneComponent(Vec, *SceneComponent, TweenType);
 			}
 			break;
 		case ETweenTargetObjectType::Material:
 			if (UMaterialInstanceDynamic* Material = Cast<UMaterialInstanceDynamic>(Object))
 			{
-				SetAsRequiredMaterial(Vec, *Material);
+				SetValueMaterial(Vec, *Material, TweenType, ParameterIndex);
 			}
 			break;
 		case ETweenTargetObjectType::Widget:
 			if (UWidget* Widget = Cast<UWidget>(Object))
 			{
-				SetAsRequiredWidget(Vec, *Widget);
+				SetValueWidget(Vec, *Widget, TweenType);
 			}
 		case ETweenTargetObjectType::Property:
-			SetAsRequiredProperty(Vec, *Object);
+			SetValueProperty(Vec, *Object, TweenType, CachedProperty);
 
 			break;
 		default:

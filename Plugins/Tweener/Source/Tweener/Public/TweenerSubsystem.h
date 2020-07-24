@@ -22,7 +22,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual ETickableTickType GetTickableTickType() const override;
 	virtual TStatId GetStatId() const override;
-	virtual bool IsTickableWhenPaused() const { return true; }
+	virtual bool IsTickableWhenPaused() const override { return true; }
 	// FTickableGameObject end
 
 	UFUNCTION(BlueprintCallable, Category = "Tween Management")
