@@ -4,9 +4,12 @@
 #include "Materials/MaterialInstanceDynamic.h"
 #include "AHEasing/easing.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/BackgroundBlur.h"
 #include "Components/Border.h"
 #include "Components/Button.h"
+#include "Components/CanvasPanelSlot.h"
 #include "Components/Image.h"
+#include "Components/TextBlock.h"
 
 using namespace AHEasing;
 
@@ -97,7 +100,9 @@ float EaseHelper(const float Value, const  EEaseType Type)
 
 UTween* UTween::NewTween(FWeakObjectPtr ObjectPtr, ETweenTargetObjectType TweenTargetObject, ETweenType TweenType, FVector4 Target, bool bIsRelative, float Duration, EEaseType EaseType, ELoopType LoopType, int32 Loops, float DelayBetweenLoops, const UObject* WorldContextObject)
 {
-	UTween* Tween = NewObject<UTween>();
+	UObject* Outer = WorldContextObject ? WorldContextObject->GetWorld() : (UObject*)GetTransientPackage();
+	
+	UTween* Tween = NewObject<UTween>(Outer);
 
 	Tween->ObjectPtr = ObjectPtr;
 	Tween->Duration = Duration;
@@ -106,6 +111,7 @@ UTween* UTween::NewTween(FWeakObjectPtr ObjectPtr, ETweenTargetObjectType TweenT
 	Tween->LoopType = LoopType;
 	Tween->Loops = Loops;
 	Tween->DelayBetweenLoops = DelayBetweenLoops;
+	Tween->Delay = DelayBetweenLoops; //if loops == 0?
 	Tween->TargetValue = Target;
 	Tween->TweenType = TweenType;
 	Tween->TargetObjectType = TweenTargetObject;
@@ -417,6 +423,20 @@ UTween* UTween::ActorRelativeRotationFrom(AActor* Actor, FQuat Rotation,
 		Duration, EaseType, LoopType, Loops, DelayBetweenLoops, WorldContextObject);
 }
 
+UTween* UTween::WidgetSlotPositionTo(UWidget* Widget, FVector2D Location, bool bIsLocationRelative, float Duration,
+	EEaseType EaseType, ELoopType LoopType, int32 Loops, float DelayBetweenLoops, const UObject* WorldContextObject)
+{
+	return NewTweenWidget(Widget, ETweenType::SlotPosition, FVector4(Location.X, Location.Y), bIsLocationRelative,
+		Duration, EaseType, LoopType, Loops, DelayBetweenLoops, WorldContextObject);
+}
+
+UTween* UTween::WidgetSlotPositionFrom(UWidget* Widget, FVector2D Location, bool bIsLocationRelative, float Duration,
+	EEaseType EaseType, ELoopType LoopType, int32 Loops, float DelayBetweenLoops, const UObject* WorldContextObject)
+{
+	return NewTweenWidgetFrom(Widget, ETweenType::SlotPosition, FVector4(Location.X, Location.Y), bIsLocationRelative,
+		Duration, EaseType, LoopType, Loops, DelayBetweenLoops, WorldContextObject);
+}
+
 UTween* UTween::WidgetRenderLocationTo(UWidget* Widget, FVector2D Location,
      bool bIsLocationRelative, float Duration, EEaseType EaseType, ELoopType LoopType, 
 	int32 Loops, float DelayBetweenLoops, const UObject* WorldContextObject)
@@ -511,6 +531,56 @@ UTween* UTween::WidgetColorFrom(UWidget* Widget, const FLinearColor& Color,
 	return NewTweenWidgetFrom(Widget, ETweenType::Color, Color, bIsColorRelative,
 		Duration, EaseType, LoopType, Loops, DelayBetweenLoops, WorldContextObject);
 }
+
+UTween* UTween::WidgetBackgroundColorTo(UWidget* Widget, FLinearColor Color,
+	bool bIsColorRelative, float Duration, EEaseType EaseType, ELoopType LoopType,
+	int32 Loops, float DelayBetweenLoops, const UObject* WorldContextObject)
+{
+	return NewTweenWidget(Widget, ETweenType::BackgroundColor, Color, bIsColorRelative,
+		Duration, EaseType, LoopType, Loops, DelayBetweenLoops, WorldContextObject);
+}
+
+UTween* UTween::WidgetBackgroundColorFrom(UWidget* Widget, const FLinearColor& Color,
+	bool bIsColorRelative, float Duration, EEaseType EaseType, ELoopType LoopType,
+	int32 Loops, float DelayBetweenLoops, const UObject* WorldContextObject)
+{
+	return NewTweenWidgetFrom(Widget, ETweenType::BackgroundColor, Color, bIsColorRelative,
+		Duration, EaseType, LoopType, Loops, DelayBetweenLoops, WorldContextObject);
+}
+
+
+UTween* UTween::WidgetBlurStrengthTo(UWidget* Widget, float BlurStrength,
+	bool bIsBlurStrengthRelative, float Duration, EEaseType EaseType, ELoopType LoopType,
+	int32 Loops, float DelayBetweenLoops, const UObject* WorldContextObject)
+{
+	return NewTweenWidget(Widget, ETweenType::BlurStrength, FVector4(BlurStrength), bIsBlurStrengthRelative,
+		Duration, EaseType, LoopType, Loops, DelayBetweenLoops, WorldContextObject);
+}
+
+UTween* UTween::WidgetBlurStrengthFrom(UWidget* Widget, float BlurStrength,
+	bool bIsBlurStrengthRelative, float Duration, EEaseType EaseType, ELoopType LoopType, int32 Loops,
+	float DelayBetweenLoops, const UObject* WorldContextObject)
+{
+	return NewTweenWidgetFrom(Widget, ETweenType::BlurStrength, FVector4(BlurStrength), bIsBlurStrengthRelative,
+		Duration, EaseType, LoopType, Loops, DelayBetweenLoops, WorldContextObject);
+}
+
+UTween* UTween::DesiredSizeScaleTo(UWidget* Widget, FVector2D SizeScale,
+	bool bIsDesiredSizeScaleRelative, float Duration, EEaseType EaseType, ELoopType LoopType,
+	int32 Loops, float DelayBetweenLoops, const UObject* WorldContextObject)
+{
+	return NewTweenWidget(Widget, ETweenType::DesiredSizeScale, FVector4(SizeScale.X, SizeScale.Y), bIsDesiredSizeScaleRelative,
+		Duration, EaseType, LoopType, Loops, DelayBetweenLoops, WorldContextObject);
+}
+
+UTween* UTween::DesiredSizeScaleFrom(UWidget* Widget, FVector2D SizeScale,
+	bool bIsDesiredSizeScaleRelative, float Duration, EEaseType EaseType, ELoopType LoopType, int32 Loops,
+	float DelayBetweenLoops, const UObject* WorldContextObject)
+{
+	return NewTweenWidgetFrom(Widget, ETweenType::DesiredSizeScale, FVector4(SizeScale.X, SizeScale.Y), bIsDesiredSizeScaleRelative,
+		Duration, EaseType, LoopType, Loops, DelayBetweenLoops, WorldContextObject);
+}
+
 
 UTween* UTween::MaterialColorTo(UMaterialInstanceDynamic* Material, FName MaterialProperty, FLinearColor Color, 
 	bool bIsColorRelative, float Duration, EEaseType EaseType, ELoopType LoopType, 
@@ -628,6 +698,17 @@ UTween* UTween::VectorFrom(UObject* Object, FName PropertyName, FVector Vector,
 	return Tween;
 }
 
+UTween* UTween::CustomAction(UObject* Object, float From, float To, float Duration, EEaseType EaseType,
+                             ELoopType LoopType, int32 Loops, float DelayBetweenLoops, const UObject* WorldContextObject)
+{
+	UTween* Tween = NewTween(FWeakObjectPtr(Object), ETweenTargetObjectType::CustomAction, ETweenType::Scalar, FVector4(To),false,
+		Duration, EaseType, LoopType, Loops, DelayBetweenLoops, WorldContextObject);
+
+	Tween->StartValue = FVector4(From);
+	
+	return Tween;
+}
+
 UTween* UTween::NextVectorTo(FVector VectorTo, float InDuration, float InDelay)
 {
 	//ensure(TweenType == ETweenType::Vector);
@@ -723,6 +804,9 @@ bool UTween::CacheInitialValues()
 
 		case ETweenTargetObjectType::Property:
 			return GetValueProperty(StartValue,CachedProperty,*Object,ParameterName,TweenType);
+
+		case ETweenTargetObjectType::CustomAction:
+			return true;
 
 		default:
 			return false;
@@ -876,7 +960,41 @@ bool UTween::GetValueMaterial(FVector4& OutVec,int32 &OutParameterIndex, UMateri
 	}
 }
 
-FLinearColor UTween::GetWidgetColorAndOpacity(const UWidget& Widget)
+//if (UImage* Image = Cast<UImage>(&Widget))
+//{
+//	Image->SetColorAndOpacity(ColorAndOpacity);
+//}
+//else if (UBorder* Border = Cast<UBorder>(&Widget))
+//{
+//	switch (TweenType)
+//	{
+//	case ETweenType::ContentColor:
+//		Border->SetContentColorAndOpacity(ColorAndOpacity);
+//		break;
+//	default:
+//	case ETweenType::BrushColor:
+//		Border->SetBrushColor(ColorAndOpacity);
+//		break;
+//	}
+//
+//}
+//else if (UButton* Button = Cast<UButton>(&Widget))
+//{
+//	switch (TweenType)
+//	{
+//	default:
+//	case ETweenType::ContentColor:
+//		Button->SetColorAndOpacity(ColorAndOpacity);
+//		break;
+//	case  ETweenType::BackgroundColor:
+//		Button->SetBackgroundColor(ColorAndOpacity);
+//		break;
+//		//Button->WidgetStyle.Hovered.TintColor
+//	}
+//
+//}
+
+FLinearColor UTween::GetWidgetColorAndOpacity(const UWidget& Widget, ETweenType TweenType)
 {
 	if(const UImage *Image = Cast<UImage>(&Widget))
 	{
@@ -884,11 +1002,30 @@ FLinearColor UTween::GetWidgetColorAndOpacity(const UWidget& Widget)
 	}
 	else if(const UBorder *Border = Cast<UBorder>(&Widget))
 	{
-		return Border->ContentColorAndOpacity;
+			switch (TweenType)
+			{
+			case ETweenType::ContentColor:
+				return Border->ContentColorAndOpacity;
+			default:
+			case ETweenType::BrushColor:
+				return Border->BrushColor;
+			}
+
 	}
 	else if(const UButton *Button = Cast<UButton>(&Widget))
 	{
-		return Button->ColorAndOpacity;
+		switch (TweenType)
+		{
+		default:
+		case ETweenType::ContentColor:
+			return Button->ColorAndOpacity;
+		case  ETweenType::BackgroundColor:
+			return Button->BackgroundColor;
+		}
+	}
+	else if (const UTextBlock* TextBlock = Cast<UTextBlock>(&Widget))
+	{
+		return TextBlock->ColorAndOpacity.GetSpecifiedColor();
 	}
 
 	return FLinearColor::Black;
@@ -905,7 +1042,10 @@ bool UTween::GetValueWidget(FVector4& OutVec, const UWidget& Widget, ETweenType 
 			OutVec = FVector4(Widget.RenderTransform.Scale.X, Widget.RenderTransform.Scale.Y);
 			return true;
 		case ETweenType::Color:
-			OutVec = GetWidgetColorAndOpacity(Widget);
+		case ETweenType::BackgroundColor:
+		case ETweenType::ContentColor:
+		case ETweenType::BrushColor:
+			OutVec = GetWidgetColorAndOpacity(Widget, TweenType);
 			return true;
 		case ETweenType::RelativeShear:
 			OutVec = FVector4(Widget.RenderTransform.Shear.X, Widget.RenderTransform.Shear.Y);
@@ -916,6 +1056,33 @@ bool UTween::GetValueWidget(FVector4& OutVec, const UWidget& Widget, ETweenType 
 		case ETweenType::Opacity:
 			OutVec = FVector4(Widget.RenderOpacity);
 			return true;
+		case ETweenType::SlotPosition:
+			if (const UCanvasPanelSlot* CanvasPanelSlot = Cast<UCanvasPanelSlot>(Widget.Slot))
+			{
+				const FVector2D Position = CanvasPanelSlot->GetPosition();
+				OutVec = FVector4(Position.X,Position.Y);
+				return true;
+			}
+			return false;
+		case ETweenType::BlurStrength:
+		{
+			if(const UBackgroundBlur* BackgroundBlur = Cast<UBackgroundBlur>(&Widget))
+			{
+				OutVec = FVector4(BackgroundBlur->BlurStrength);
+				return true;
+			}
+			return false;
+		}
+		case ETweenType::DesiredSizeScale:
+		{
+			if (const UBorder* Border = Cast<UBorder>(&Widget))
+			{
+				OutVec = FVector4(Border->DesiredSizeScale.X, Border->DesiredSizeScale.Y, 0.0f,0.0f);
+				return true;
+			}
+			return false;
+		}
+		
 		default:
 			return false;
 	}
@@ -952,10 +1119,40 @@ bool UTween::GetValueProperty(FVector4& OutVec, FProperty*& OutProperty, const U
 	return false;
 }
 
+float UTween::PercentComplete() const
+{
+	// add deltaTime to our elapsed time and clamp it from -delay to duration
+	const float LocalElapsedTime = FMath::Clamp(ElapsedTime, -Delay, Duration);
+
+	// if we have a delay, we will have a negative elapsedTime until the delay is complete
+	if (LocalElapsedTime <= 0)
+	{
+		return 0.0f;
+	}
+
+	const float ModifiedElapsedTime = bIsRunningInReverse ? Duration - ElapsedTime : ElapsedTime;
+
+	return ModifiedElapsedTime / Duration;
+}
+
 bool UTween::Tick(float DeltaTime, float UnscaledDeltaTime, bool bCompleteTweenThisStep)
 {
 	// fetch our deltaTime. It will either be taking this to completion or standard delta/unscaledDelta
-	DeltaTime = bCompleteTweenThisStep ? TNumericLimits< float >::Max() : (bIsTimeScaleIndependent ? UnscaledDeltaTime : DeltaTime);
+	if (bCompleteTweenThisStep)
+	{
+		DeltaTime = TNumericLimits< float >::Max();
+		if (LoopType == ELoopType::PingPong)
+		{
+			if (Loops % 2 == 1)
+			{
+				bIsRunningInReverse = !bIsRunningInReverse;
+			}
+		}
+	}
+	else
+	{
+		DeltaTime = bIsTimeScaleIndependent ? UnscaledDeltaTime : DeltaTime;
+	}
 
 	// add deltaTime to our elapsed time and clamp it from -delay to duration
 	ElapsedTime = FMath::Clamp(ElapsedTime + DeltaTime, -Delay, Duration);
@@ -970,10 +1167,7 @@ bool UTween::Tick(float DeltaTime, float UnscaledDeltaTime, bool bCompleteTweenT
 
 	const float EasedTime = EaseHelper(ModifiedElapsedTime / Duration, EaseType);//(animCurve == null) ? EaseHelper.ease(easeType, modifiedElapsedTime, duration) : animCurve.Evaluate(modifiedElapsedTime / duration);
 
-	// special case: Action tweens
-	/*if (tweenType == TweenType::Action)
-		customAction(transform, easedTime);*/
-
+	
 	FVector4 Vec;
 	
 	switch (GetTargetValueType())
@@ -995,6 +1189,12 @@ bool UTween::Tick(float DeltaTime, float UnscaledDeltaTime, bool bCompleteTweenT
 	default: ;
 	}
 
+	if (Action.IsBound())
+	{
+		Action.Broadcast(ObjectPtr.Get(false), EasedTime,Vec.X );
+	}
+
+	
 	SetAsRequiredPerCurrentTweenType(Vec);
 
 	// if we have a loopType and we are done do the loop
@@ -1006,17 +1206,24 @@ bool UTween::Tick(float DeltaTime, float UnscaledDeltaTime, bool bCompleteTweenT
 	return FMath::IsNearlyEqual(ElapsedTime, Duration);
 }
 
+void UTween::SetValueEnd() const
+{
+	SetAsRequiredPerCurrentTweenType(EndValue);
+
+	//Same as
+	//bCompleteTweenThisStep = true;
+	//Tick(0.f, 0.f, bool bCompleteTweenThisStep)
+}
+
 void UTween::Activate()
 {
 	UWorld* World = WorldContextObject->GetWorld();
 
 	UGameInstance* GameInstance = World->GetGameInstance();
 
-	UTweenerSubsystem* Subsystem = GameInstance->GetSubsystem<UTweenerSubsystem>();
-
-	if(PrepareForUse())
+	if (UTweenerSubsystem* Subsystem = GameInstance->GetSubsystem<UTweenerSubsystem>())
 	{
-		Subsystem->AddTween(this);
+		Subsystem->StartTween(this);
 	}
 }
 
@@ -1092,7 +1299,7 @@ void UTween::SetValueMaterial(const FVector4& Vec, UMaterialInstanceDynamic& Mat
 	}	
 }
 
-void UTween::SetWidgetColorAndOpacity(UWidget& Widget, FLinearColor ColorAndOpacity)
+void UTween::SetWidgetColorAndOpacity(UWidget& Widget, FLinearColor ColorAndOpacity, ETweenType TweenType)
 {
 	if (UImage* Image = Cast<UImage>(&Widget))
 	{
@@ -1100,11 +1307,34 @@ void UTween::SetWidgetColorAndOpacity(UWidget& Widget, FLinearColor ColorAndOpac
 	}
 	else if (UBorder* Border = Cast<UBorder>(&Widget))
 	{
-		Border->SetContentColorAndOpacity(ColorAndOpacity);
+		switch(TweenType)
+		{
+		case ETweenType::ContentColor:
+			Border->SetContentColorAndOpacity(ColorAndOpacity);
+			break;
+		default:
+		case ETweenType::BrushColor:
+			Border->SetBrushColor(ColorAndOpacity);
+			break;
+		}
+		
 	}
 	else if (UButton* Button = Cast<UButton>(&Widget))
 	{
-		Button->SetColorAndOpacity(ColorAndOpacity);
+		switch (TweenType)
+		{
+		default:
+		case ETweenType::ContentColor:
+			Button->SetColorAndOpacity(ColorAndOpacity);
+			break;
+		case  ETweenType::BackgroundColor:
+			Button->SetBackgroundColor(ColorAndOpacity);
+			break;
+		}
+	}
+	else if (UTextBlock* TextBlock = Cast<UTextBlock>(&Widget))
+	{
+		return TextBlock->SetColorAndOpacity(FSlateColor(ColorAndOpacity));
 	}
 }
 
@@ -1119,8 +1349,10 @@ void UTween::SetValueWidget(const FVector4& Vec, UWidget& Widget, ETweenType Twe
 		Widget.SetRenderScale(FVector2D(Vec.X, Vec.Y));
 		break;
 	case ETweenType::Color:
+	case ETweenType::BackgroundColor:
+	case ETweenType::ContentColor:
 		{	
-			SetWidgetColorAndOpacity(Widget, FLinearColor(Vec));
+			SetWidgetColorAndOpacity(Widget, FLinearColor(Vec), TweenType);
 		}
 		break;
 	case ETweenType::RelativeShear:
@@ -1132,11 +1364,32 @@ void UTween::SetValueWidget(const FVector4& Vec, UWidget& Widget, ETweenType Twe
 	case ETweenType::Opacity:
 		Widget.SetRenderOpacity(Vec.X);
 		break;
+	case ETweenType::SlotPosition:
+		if (UCanvasPanelSlot* CanvasPanelSlot = Cast<UCanvasPanelSlot>(Widget.Slot))
+		{
+			CanvasPanelSlot->SetPosition(FVector2D(Vec.X, Vec.Y));
+		}
+		break;
+
+	case ETweenType::BlurStrength:
+	{
+		if (UBackgroundBlur* BackgroundBlur = Cast<UBackgroundBlur>(&Widget))
+		{
+			BackgroundBlur->SetBlurStrength(Vec.X);
+		}
+	}
+	case ETweenType::DesiredSizeScale:
+	{
+		if (UBorder* Border = Cast<UBorder>(&Widget))
+		{
+			Border->SetDesiredSizeScale(FVector2D(Vec.X, Vec.Y));
+		}
+	}
 	default: ;
 	}
 }
 
-void UTween::SetValueProperty(const FVector4& Vec, UObject& Object, ETweenType TweenType, const FProperty *CachedProperty)
+void UTween::SetValueProperty(const FVector4& Vec, UObject& Object, ETweenType TweenType, FProperty* CachedProperty)
 {
 	switch (TweenType)
 	{
@@ -1144,6 +1397,8 @@ void UTween::SetValueProperty(const FVector4& Vec, UObject& Object, ETweenType T
 			if(const FFloatProperty *FloatProperty = CastField<FFloatProperty>(CachedProperty))
 			{
 				FloatProperty->SetPropertyValue_InContainer(&Object, static_cast<float>(Vec.X));
+
+				Object.PostInterpChange(CachedProperty);
 			}
 
 			break;
@@ -1151,6 +1406,8 @@ void UTween::SetValueProperty(const FVector4& Vec, UObject& Object, ETweenType T
 			if (const FStructProperty* StructProperty = CastField<FStructProperty>(CachedProperty))
 			{
 				*StructProperty->ContainerPtrToValuePtr<FVector>(&Object) = FVector(Vec.X,Vec.Y,Vec.Z);
+
+				Object.PostInterpChange(CachedProperty);
 			}
 			break;
 		default: ;
@@ -1204,7 +1461,7 @@ void UTween::ReverseTween()
 	ElapsedTime = Duration - ElapsedTime;
 }
 
-bool UTween::Stop(bool bBringToCompletion)
+bool UTween::Stop(bool bBringToCompletion, bool bIncludeChain)
 {
 	UWorld* World = GetWorld();
 
@@ -1222,7 +1479,31 @@ bool UTween::Stop(bool bBringToCompletion)
 
 	if(UTweenerSubsystem *Subsystem = GameInstance->GetSubsystem<UTweenerSubsystem>())
 	{
-		return Subsystem->StopTween(this, bBringToCompletion);
+		return Subsystem->StopTween(this, bBringToCompletion, bIncludeChain);
+	}
+
+	return false;
+}
+
+bool UTween::IsActive() const
+{
+	UWorld* World = GetWorld();
+
+	if (!World)
+	{
+		return false;
+	}
+
+	UGameInstance* GameInstance = World->GetGameInstance();
+
+	if (!GameInstance)
+	{
+		return false;
+	}
+
+	if (UTweenerSubsystem* Subsystem = GameInstance->GetSubsystem<UTweenerSubsystem>())
+	{
+		return Subsystem->IsTweenActive(this);
 	}
 
 	return false;

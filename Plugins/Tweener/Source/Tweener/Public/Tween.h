@@ -55,6 +55,7 @@ enum class ETweenTargetObjectType : uint8
 	Material,
 	Widget,
 	Property,
+	CustomAction
 };
 
 
@@ -72,8 +73,13 @@ enum class ETweenType : uint8
 	RelativeShear,
 	RelativeAngle,
 	Opacity,
-	Margin,
+	SlotPosition,
 	Vector,
+	BlurStrength,
+	DesiredSizeScale,
+	BackgroundColor,
+	ContentColor,
+	BrushColor,
 };
 
 UENUM(BlueprintType)
@@ -94,6 +100,8 @@ enum class ETargetValueType : uint8
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTweenOutputPin);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FTweenCustomAction, UObject*,Object,float,EasedValue,float,Value);
 
 
 /**
@@ -227,6 +235,16 @@ public:
 		int32 Loops = 0, float DelayBetweenLoops = 0.0f, const UObject* WorldContextObject = nullptr);
 
 	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true", WorldContext = "WorldContextObject", AdvancedDisplay = 4), Category = "Tween")
+	static UTween* WidgetSlotPositionTo(UWidget* Widget, FVector2D Location, bool bIsLocationRelative = false, float Duration = 0.25f,
+			EEaseType EaseType = EEaseType::QuarticEaseIn, ELoopType LoopType = ELoopType::None,
+			int32 Loops = 0, float DelayBetweenLoops = 0.0f, const UObject* WorldContextObject = nullptr);
+
+	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true", WorldContext = "WorldContextObject", AdvancedDisplay = 4), Category = "Tween")
+	static UTween* WidgetSlotPositionFrom(UWidget* Widget, FVector2D Location, bool bIsLocationRelative = false, float Duration = 0.25f,
+			EEaseType EaseType = EEaseType::QuarticEaseIn, ELoopType LoopType = ELoopType::None,
+			int32 Loops = 0, float DelayBetweenLoops = 0.0f, const UObject* WorldContextObject = nullptr);
+
+	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true", WorldContext = "WorldContextObject", AdvancedDisplay = 4), Category = "Tween")
 	static UTween* WidgetRenderLocationTo(UWidget* Widget, FVector2D Location, bool bIsLocationRelative = false, float Duration = 0.25f, 
 		EEaseType EaseType = EEaseType::QuarticEaseIn, ELoopType LoopType = ELoopType::None,
         int32 Loops = 0, float DelayBetweenLoops = 0.0f, const UObject* WorldContextObject = nullptr);
@@ -287,6 +305,37 @@ public:
 		int32 Loops = 0, float DelayBetweenLoops = 0.0f, const UObject* WorldContextObject = nullptr);
 
 	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true", WorldContext = "WorldContextObject", AdvancedDisplay = 4), Category = "Tween")
+		static UTween* WidgetBackgroundColorTo(UWidget* Widget, FLinearColor Color, bool bIsColorRelative = false, float Duration = 0.25f,
+			EEaseType EaseType = EEaseType::QuarticEaseIn, ELoopType LoopType = ELoopType::None,
+			int32 Loops = 0, float DelayBetweenLoops = 0.0f, const UObject* WorldContextObject = nullptr);
+
+	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true", WorldContext = "WorldContextObject", AdvancedDisplay = 4), Category = "Tween")
+		static UTween* WidgetBackgroundColorFrom(UWidget* Widget, const FLinearColor& Color, bool bIsColorRelative = false, float Duration = 0.25f,
+			EEaseType EaseType = EEaseType::QuarticEaseIn, ELoopType LoopType = ELoopType::None,
+			int32 Loops = 0, float DelayBetweenLoops = 0.0f, const UObject* WorldContextObject = nullptr);
+
+	
+	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true", WorldContext = "WorldContextObject", AdvancedDisplay = 4), Category = "Tween")
+	static UTween* WidgetBlurStrengthTo(UWidget* Widget, float BlurStrength = 1.f, bool bIsBlurStrengthRelative = false, float Duration = 0.25f,
+		EEaseType EaseType = EEaseType::QuarticEaseIn, ELoopType LoopType = ELoopType::None,
+		int32 Loops = 0, float DelayBetweenLoops = 0.0f, const UObject* WorldContextObject = nullptr);
+
+	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true", WorldContext = "WorldContextObject", AdvancedDisplay = 4), Category = "Tween")
+	static UTween* WidgetBlurStrengthFrom(UWidget* Widget, float BlurStrength = 0.f, bool bIsBlurStrengthRelative = false, float Duration = 0.25f,
+		EEaseType EaseType = EEaseType::QuarticEaseIn, ELoopType LoopType = ELoopType::None,
+		int32 Loops = 0, float DelayBetweenLoops = 0.0f, const UObject* WorldContextObject = nullptr);
+
+	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true", WorldContext = "WorldContextObject", AdvancedDisplay = 4), Category = "Tween")
+	static UTween* DesiredSizeScaleTo(UWidget* Widget, FVector2D SizeScale = FVector2D(1.f, 1.f), bool bIsDesiredSizeScaleRelative = false, float Duration = 0.25f,
+		EEaseType EaseType = EEaseType::QuarticEaseIn, ELoopType LoopType = ELoopType::None,
+		int32 Loops = 0, float DelayBetweenLoops = 0.0f, const UObject* WorldContextObject = nullptr);
+
+	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true", WorldContext = "WorldContextObject", AdvancedDisplay = 4), Category = "Tween")
+	static UTween* DesiredSizeScaleFrom(UWidget* Widget, FVector2D SizeScale = FVector2D(0.f,0.f), bool bIsDesiredSizeScaleRelative = false, float Duration = 0.25f,
+		EEaseType EaseType = EEaseType::QuarticEaseIn, ELoopType LoopType = ELoopType::None,
+		int32 Loops = 0, float DelayBetweenLoops = 0.0f, const UObject* WorldContextObject = nullptr);
+
+	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true", WorldContext = "WorldContextObject", AdvancedDisplay = 5), Category = "Tween")
 	static UTween* MaterialColorTo(UMaterialInstanceDynamic* Material, FName MaterialProperty, FLinearColor Color, bool bIsColorRelative = false, float Duration = 0.25f, 
 		EEaseType EaseType = EEaseType::QuarticEaseIn, ELoopType LoopType = ELoopType::None,
 		int32 Loops = 0, float DelayBetweenLoops = 0.0f, const UObject* WorldContextObject = nullptr);
@@ -296,25 +345,31 @@ public:
 		EEaseType EaseType = EEaseType::QuarticEaseIn, ELoopType LoopType = ELoopType::None,
 		int32 Loops = 0, float DelayBetweenLoops = 0.0f, const UObject* WorldContextObject = nullptr );
 
-	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true", WorldContext = "WorldContextObject", AdvancedDisplay = 4), Category = "Tween")
+	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true", WorldContext = "WorldContextObject", AdvancedDisplay = 5), Category = "Tween")
 	static UTween* FloatTo(UObject* Object, FName PropertyName, float Value, bool bIsValueRelative = false, float Duration = 0.25f,
 		EEaseType EaseType = EEaseType::QuarticEaseIn, ELoopType LoopType = ELoopType::None,
 		int32 Loops = 0, float DelayBetweenLoops = 0.0f, const UObject* WorldContextObject = nullptr);
 
-	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true", WorldContext = "WorldContextObject", AdvancedDisplay = 4), Category = "Tween")
+	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true", WorldContext = "WorldContextObject", AdvancedDisplay = 5), Category = "Tween")
 	static UTween* FloatFrom(UObject* Object, FName PropertyName, float Value, bool bIsValueRelative = false, float Duration = 0.25f,
 		EEaseType EaseType = EEaseType::QuarticEaseIn, ELoopType LoopType = ELoopType::None,
 		int32 Loops = 0, float DelayBetweenLoops = 0.0f, const UObject* WorldContextObject = nullptr);
 
-	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true", WorldContext = "WorldContextObject", AdvancedDisplay = 4), Category = "Tween")
+	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true", WorldContext = "WorldContextObject", AdvancedDisplay = 5), Category = "Tween")
 	static UTween* VectorTo(UObject* Object, FName PropertyName, FVector Vector, bool bIsVectorRelative = false, float Duration = 0.25f,
 		EEaseType EaseType = EEaseType::QuarticEaseIn, ELoopType LoopType = ELoopType::None,
 		int32 Loops = 0, float DelayBetweenLoops = 0.0f, const UObject* WorldContextObject = nullptr);
 
-	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true", WorldContext = "WorldContextObject", AdvancedDisplay = 4), Category = "Tween")
+	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true", WorldContext = "WorldContextObject", AdvancedDisplay = 5), Category = "Tween")
 	static UTween* VectorFrom(UObject* Object, FName PropertyName, FVector Vector, bool bIsVectorRelative = false, float Duration = 0.25f,
 		EEaseType EaseType = EEaseType::QuarticEaseIn, ELoopType LoopType = ELoopType::None,
 		int32 Loops = 0, float DelayBetweenLoops = 0.0f, const UObject* WorldContextObject = nullptr);
+
+	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true", WorldContext = "WorldContextObject", AdvancedDisplay = 4), Category = "Tween")
+	static UTween* CustomAction(UObject* Object, float From = 0.0f, float To = 1.0f ,float Duration = 0.25f,
+        EEaseType EaseType = EEaseType::QuarticEaseIn, ELoopType LoopType = ELoopType::None,
+        int32 Loops = 0, float DelayBetweenLoops = 0.0f, const UObject* WorldContextObject = nullptr);
+
 
 	UFUNCTION(BlueprintCallable)
 	UTween* NextVectorTo(FVector VectorTo, float InDuration = 0.25f, float InDelay = 0.f);
@@ -354,7 +409,10 @@ public:
 	void ReverseTween();
 	
 	UFUNCTION(BlueprintCallable)
-	bool Stop(bool bBringToCompletion);
+	bool Stop(bool bBringToCompletion = false, bool bIncludeChain = false);
+
+	UFUNCTION(BlueprintCallable)
+	bool IsActive() const;
 
 	//These are aliased as Vectors/Quaternions/Scalar as needed
 	UPROPERTY()
@@ -409,9 +467,9 @@ public:
 	/** Cached property pointer */
 	FProperty* CachedProperty;
 	
-	// tweenable: Action and property
-	//internal Action<Transform, float> customAction;
-
+	UPROPERTY(BlueprintAssignable)
+	FTweenCustomAction Action;
+	
 	UPROPERTY(BlueprintAssignable)
 	FTweenOutputPin Complete;
 
@@ -436,6 +494,9 @@ public:
 	virtual void Activate() override;
 	//~UBlueprintAsyncActionBase interface
 
+
+	float PercentComplete() const;
+	
 	/**
 	 * handles the tween. returns true if it is complete and ready for removal
 	 * @param DeltaTime 
@@ -445,6 +506,13 @@ public:
 	 */
 	bool Tick(float DeltaTime, float UnscaledDeltaTime, bool bCompleteTweenThisStep = false);
 
+	void SetValueEnd() const;
+
+	static bool GetValueWidget(FVector4& OutVec, const UWidget& Widget, ETweenType TweenType);
+
+	static UTween* NewTweenWidget(UWidget* Widget, ETweenType TweenType, FVector4 Target, bool bIsRelative, float Duration,
+		EEaseType EaseType, ELoopType LoopType, int32 Loops, float DelayBetweenLoops,
+		const UObject* WorldContextObject);
 	
 private:
 
@@ -460,9 +528,7 @@ private:
 	                                   bool bIsRelative, float Duration, EEaseType EaseType, ELoopType LoopType,
 	                                   int32 Loops, float DelayBetweenLoops, const UObject* WorldContextObject);
 
-	static UTween* NewTweenWidget(UWidget* Widget, ETweenType TweenType, FVector4 Target, bool bIsRelative, float Duration,
-	                              EEaseType EaseType, ELoopType LoopType, int32 Loops, float DelayBetweenLoops,
-	                              const UObject* WorldContextObject);
+	
 
 	static UTween* NewTweenWidgetFrom(UWidget* Widget, ETweenType TweenType, FVector4 From, bool bIsRelative, float Duration,
 	                           EEaseType EaseType, ELoopType LoopType, int32 Loops, float DelayBetweenLoops,
@@ -476,11 +542,11 @@ private:
 
 	static void SetValueMaterial(const FVector4& Vec, UMaterialInstanceDynamic& Material, ETweenType TweenType, int32 ParameterIndex);
 	
-	static void SetWidgetColorAndOpacity(UWidget& Widget, FLinearColor ColorAndOpacity);
+	static void SetWidgetColorAndOpacity(UWidget& Widget, FLinearColor ColorAndOpacity, ETweenType TweenType);
 
 	static void SetValueWidget(const FVector4& Vec, UWidget& Widget, ETweenType TweenType);
 	
-	static void SetValueProperty(const FVector4& Vec, UObject& Object, ETweenType TweenType, const FProperty* CachedProperty);
+	static void SetValueProperty(const FVector4& Vec, UObject& Object, ETweenType TweenType, FProperty* CachedProperty);
 
 	bool CacheInitialValues();
 
@@ -489,9 +555,8 @@ private:
 	static bool GetValueSceneComponent(FVector4& OutVec, const USceneComponent& SceneComponent, ETweenType TweenType);
 	static bool GetValueMaterial(FVector4& OutVec, int32& OutParameterIndex, UMaterialInstanceDynamic& Material, FName ParameterName, ETweenType TweenType);
 
-	static FLinearColor GetWidgetColorAndOpacity(const UWidget& Widget);
+	static FLinearColor GetWidgetColorAndOpacity(const UWidget& Widget, ETweenType TweenType);
 
-	static bool GetValueWidget(FVector4& OutVec, const UWidget& Widget, ETweenType TweenType);
 	static bool GetValueProperty(FVector4& OutVec, FProperty*& OutProperty, const UObject& Object, FName ParameterName, ETweenType TweenType);
 
 	const UObject* WorldContextObject;
