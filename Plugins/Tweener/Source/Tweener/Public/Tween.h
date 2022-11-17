@@ -100,6 +100,7 @@ enum class ETargetValueType : uint8
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTweenOutputPin);
+DECLARE_MULTICAST_DELEGATE(FTweenDelegate);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FTweenCustomAction, UObject*,Object,float,EasedValue,float,Value);
 
@@ -472,9 +473,11 @@ public:
 	
 	UPROPERTY(BlueprintAssignable)
 	FTweenOutputPin Complete;
+	FTweenDelegate CompleteDelegate; // Non-dynamic version
 
 	UPROPERTY(BlueprintAssignable)
 	FTweenOutputPin LoopComplete;
+	FTweenDelegate LoopCompleteDelegate; // Non-dynamic version
 	
 	// internal state
 

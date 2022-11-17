@@ -40,6 +40,7 @@ void UTweenerSubsystem::Tick(float DeltaTime)
 		if (!Tween->ObjectPtr.IsValid() || Tween->Tick(DeltaTime, UnscaledDeltaTime))
 		{
 			Tween->Complete.Broadcast();
+			Tween->CompleteDelegate.Broadcast();
 
 			//// handle nextTween if we have a chain
 			if (Tween->NextTween != nullptr)
@@ -90,6 +91,7 @@ bool UTweenerSubsystem::StopTween(UTween* Tween, bool bBringToCompletion, bool b
 				}
 
 				TweenItr->Complete.Broadcast();
+				TweenItr->CompleteDelegate.Broadcast();
 			}
 
 			//Every linked tween after the active tween will need to be Completed
@@ -121,6 +123,7 @@ bool UTweenerSubsystem::StopTweenForObject(UObject *Object, bool bBringToComplet
 				Tween->Tick(0.f, 0.f, true);
 
 				Tween->Complete.Broadcast();
+				Tween->CompleteDelegate.Broadcast();
 			}
 
 			ActiveTweens.RemoveAt(Index);
@@ -142,6 +145,7 @@ void UTweenerSubsystem::StopAllTweens(bool bBringToCompletion)
 				ActiveTween->Tick(0.f, 0.f, true);
 
 				ActiveTween->Complete.Broadcast();
+				ActiveTween->CompleteDelegate.Broadcast();
 			}
 		}
 	}

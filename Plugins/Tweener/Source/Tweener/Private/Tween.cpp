@@ -1247,6 +1247,7 @@ void UTween::HandleLooping()
 	if (LoopType == ELoopType::RestartFromBeginning || Loops % 2 == 1)
 	{
 		LoopComplete.Broadcast();
+		LoopCompleteDelegate.Broadcast();
 	}
 
 	// kill our loop if we have no loops left and zero out the delay then prepare for use
