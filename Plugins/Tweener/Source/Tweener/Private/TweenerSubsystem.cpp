@@ -96,7 +96,7 @@ bool UTweenerSubsystem::StopTween(UTween* Tween, bool bBringToCompletion, bool b
 			bFoundActive = true;
 		}
 
-		TweenItr = bBringToCompletion && bIncludeChain ? TweenItr->NextTween : nullptr;
+		TweenItr = bIncludeChain ? TweenItr->NextTween : nullptr;
 	}
 
 	return bFoundActive;
