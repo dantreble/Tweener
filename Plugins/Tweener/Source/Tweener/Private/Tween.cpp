@@ -1005,10 +1005,10 @@ FLinearColor UTween::GetWidgetColorAndOpacity(const UWidget& Widget, ETweenType 
 			switch (TweenType)
 			{
 			case ETweenType::ContentColor:
-				return Border->ContentColorAndOpacity;
+				return Border->GetContentColorAndOpacity();
 			default:
 			case ETweenType::BrushColor:
-				return Border->BrushColor;
+				return Border->GetBrushColor();
 			}
 
 	}
@@ -1025,7 +1025,7 @@ FLinearColor UTween::GetWidgetColorAndOpacity(const UWidget& Widget, ETweenType 
 	}
 	else if (const UTextBlock* TextBlock = Cast<UTextBlock>(&Widget))
 	{
-		return TextBlock->ColorAndOpacity.GetSpecifiedColor();
+		return TextBlock->GetColorAndOpacity().GetSpecifiedColor();
 	}
 
 	return FLinearColor::Black;
@@ -1036,10 +1036,10 @@ bool UTween::GetValueWidget(FVector4& OutVec, const UWidget& Widget, ETweenType 
 	switch (TweenType)
 	{
 		case ETweenType::RelativeLocation:
-			OutVec = FVector4(Widget.RenderTransform.Translation.X, Widget.RenderTransform.Translation.Y);
+			OutVec = FVector4(Widget.GetRenderTransform().Translation.X, Widget.GetRenderTransform().Translation.Y);
 			return true;
 		case ETweenType::RelativeScale:
-			OutVec = FVector4(Widget.RenderTransform.Scale.X, Widget.RenderTransform.Scale.Y);
+			OutVec = FVector4(Widget.GetRenderTransform().Scale.X, Widget.GetRenderTransform().Scale.Y);
 			return true;
 		case ETweenType::Color:
 		case ETweenType::BackgroundColor:
@@ -1048,13 +1048,13 @@ bool UTween::GetValueWidget(FVector4& OutVec, const UWidget& Widget, ETweenType 
 			OutVec = GetWidgetColorAndOpacity(Widget, TweenType);
 			return true;
 		case ETweenType::RelativeShear:
-			OutVec = FVector4(Widget.RenderTransform.Shear.X, Widget.RenderTransform.Shear.Y);
+			OutVec = FVector4(Widget.GetRenderTransform().Shear.X, Widget.GetRenderTransform().Shear.Y);
 			return true;
 		case ETweenType::RelativeAngle:
 			OutVec = FVector4(Widget.GetRenderTransformAngle());
 			return true;
 		case ETweenType::Opacity:
-			OutVec = FVector4(Widget.RenderOpacity);
+			OutVec = FVector4(Widget.GetRenderOpacity());
 			return true;
 		case ETweenType::SlotPosition:
 			if (const UCanvasPanelSlot* CanvasPanelSlot = Cast<UCanvasPanelSlot>(Widget.Slot))
@@ -1068,7 +1068,7 @@ bool UTween::GetValueWidget(FVector4& OutVec, const UWidget& Widget, ETweenType 
 		{
 			if(const UBackgroundBlur* BackgroundBlur = Cast<UBackgroundBlur>(&Widget))
 			{
-				OutVec = FVector4(BackgroundBlur->BlurStrength);
+				OutVec = FVector4(BackgroundBlur->GetBlurStrength());
 				return true;
 			}
 			return false;
@@ -1077,7 +1077,8 @@ bool UTween::GetValueWidget(FVector4& OutVec, const UWidget& Widget, ETweenType 
 		{
 			if (const UBorder* Border = Cast<UBorder>(&Widget))
 			{
-				OutVec = FVector4(Border->DesiredSizeScale.X, Border->DesiredSizeScale.Y, 0.0f,0.0f);
+				FVector2D DesiredSizeScale =Border->GetDesiredSizeScale();
+				OutVec = FVector4(DesiredSizeScale.X, DesiredSizeScale.Y, 0.0f,0.0f);
 				return true;
 			}
 			return false;
