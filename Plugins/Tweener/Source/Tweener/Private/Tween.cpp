@@ -223,7 +223,7 @@ UTween* UTween::ComponentRelativeScaleTo(USceneComponent* SceneComponent, FVecto
 	bool bIsScaleRelative, float Duration, EEaseType EaseType, ELoopType LoopType, int32 Loops, 
 	float DelayBetweenLoops, const UObject* WorldContextObject)
 {
-	return NewTweenSceneComponent(SceneComponent, ETweenType::Scale, FVector4(Scale), bIsScaleRelative, 
+	return NewTweenSceneComponent(SceneComponent, ETweenType::RelativeScale, FVector4(Scale), bIsScaleRelative, 
 		Duration, EaseType, LoopType, Loops, DelayBetweenLoops, WorldContextObject);
 }
 
@@ -231,7 +231,7 @@ UTween* UTween::ComponentRelativeScaleFrom(USceneComponent* SceneComponent, FVec
 	bool bIsScaleRelative, float Duration, EEaseType EaseType, ELoopType LoopType, int32 Loops, 
 	float DelayBetweenLoops, const UObject* WorldContextObject)
 {
-	return NewTweenSceneComponentFrom(SceneComponent, ETweenType::Scale, FVector4(Scale), bIsScaleRelative,
+	return NewTweenSceneComponentFrom(SceneComponent, ETweenType::RelativeScale, FVector4(Scale), bIsScaleRelative,
 		Duration, EaseType, LoopType, Loops, DelayBetweenLoops, WorldContextObject);
 }
 
@@ -1247,6 +1247,7 @@ void UTween::HandleLooping()
 	if (LoopType == ELoopType::RestartFromBeginning || Loops % 2 == 1)
 	{
 		LoopComplete.Broadcast();
+		LoopCompleteDelegate.Broadcast();
 	}
 
 	// kill our loop if we have no loops left and zero out the delay then prepare for use
