@@ -998,7 +998,7 @@ FLinearColor UTween::GetWidgetColorAndOpacity(const UWidget& Widget, ETweenType 
 {
 	if(const UImage *Image = Cast<UImage>(&Widget))
 	{
-		return Image->ColorAndOpacity;
+		return Image->GetColorAndOpacity();
 	}
 	else if(const UBorder *Border = Cast<UBorder>(&Widget))
 	{
@@ -1018,9 +1018,9 @@ FLinearColor UTween::GetWidgetColorAndOpacity(const UWidget& Widget, ETweenType 
 		{
 		default:
 		case ETweenType::ContentColor:
-			return Button->ColorAndOpacity;
+			return Button->GetColorAndOpacity();
 		case  ETweenType::BackgroundColor:
-			return Button->BackgroundColor;
+			return Button->GetBackgroundColor();
 		}
 	}
 	else if (const UTextBlock* TextBlock = Cast<UTextBlock>(&Widget))
