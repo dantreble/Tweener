@@ -10,6 +10,8 @@
 #include "Components/CanvasPanelSlot.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
+#include "Engine/GameInstance.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 using namespace AHEasing;
 
@@ -998,7 +1000,7 @@ FLinearColor UTween::GetWidgetColorAndOpacity(const UWidget& Widget, ETweenType 
 {
 	if(const UImage *Image = Cast<UImage>(&Widget))
 	{
-		return Image->ColorAndOpacity;
+		return Image->GetColorAndOpacity();
 	}
 	else if(const UBorder *Border = Cast<UBorder>(&Widget))
 	{
@@ -1018,9 +1020,9 @@ FLinearColor UTween::GetWidgetColorAndOpacity(const UWidget& Widget, ETweenType 
 		{
 		default:
 		case ETweenType::ContentColor:
-			return Button->ColorAndOpacity;
+			return Button->GetColorAndOpacity();
 		case  ETweenType::BackgroundColor:
-			return Button->BackgroundColor;
+			return Button->GetBackgroundColor();
 		}
 	}
 	else if (const UTextBlock* TextBlock = Cast<UTextBlock>(&Widget))
@@ -1400,7 +1402,9 @@ void UTween::SetValueProperty(const FVector4& Vec, UObject& Object, ETweenType T
 			{
 				FloatProperty->SetPropertyValue_InContainer(&Object, static_cast<float>(Vec.X));
 
+#if ENGINE_MAJOR_VERSION < 5
 				Object.PostInterpChange(CachedProperty);
+#endif
 			}
 
 			break;
@@ -1409,7 +1413,9 @@ void UTween::SetValueProperty(const FVector4& Vec, UObject& Object, ETweenType T
 			{
 				*StructProperty->ContainerPtrToValuePtr<FVector>(&Object) = FVector(Vec.X,Vec.Y,Vec.Z);
 
+#if ENGINE_MAJOR_VERSION < 5
 				Object.PostInterpChange(CachedProperty);
+#endif
 			}
 			break;
 		default: ;

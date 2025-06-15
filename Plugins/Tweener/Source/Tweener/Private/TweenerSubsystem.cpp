@@ -39,6 +39,8 @@ void UTweenerSubsystem::Tick(float DeltaTime)
 
 		if (!Tween->ObjectPtr.IsValid() || Tween->Tick(DeltaTime, UnscaledDeltaTime))
 		{
+			ActiveTweens.RemoveAt(Index);
+
 			Tween->Complete.Broadcast();
 			Tween->CompleteDelegate.Broadcast();
 
@@ -50,8 +52,6 @@ void UTweenerSubsystem::Tick(float DeltaTime)
 					ActiveTweens.Add(Tween->NextTween);
 				}
 			}
-
-			ActiveTweens.RemoveAt(Index);
 		}
 	}
 }

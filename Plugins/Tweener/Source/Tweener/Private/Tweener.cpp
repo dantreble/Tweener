@@ -1,5 +1,7 @@
 #include "Tweener.h"
 
+#include "Modules/ModuleManager.h"
+
 #define LOCTEXT_NAMESPACE "FTweenerModule"
 
 void FTweenerModule::StartupModule()
